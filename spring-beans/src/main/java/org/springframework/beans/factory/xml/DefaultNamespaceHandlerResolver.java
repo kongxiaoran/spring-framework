@@ -114,25 +114,36 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	 */
 	@Override
 	@Nullable
-	public NamespaceHandler resolve(String namespaceUri) {
+	public NamespaceHandler  resolve(String namespaceUri) {
+		// 获取所有已经配置的 handler 映射
+		// 如果要使用自定义标签，必须要在Spring.handlers文件中配置命名空间和命名空间处理器的映射关系，只有这样Spring才能找到匹配的处理器
+		// getHandlerMappings 的主要功能就是读取 Spring.handlers 配置文件，并将配置文件缓存到 map 中、
 		Map<String, Object> handlerMappings = getHandlerMappings();
+		// 根据命名空间找到对应信息
 		Object handlerOrClassName = handlerMappings.get(namespaceUri);
 		if (handlerOrClassName == null) {
 			return null;
 		}
 		else if (handlerOrClassName instanceof NamespaceHandler) {
+			// 已经做过解析情况，直接从缓存读取
 			return (NamespaceHandler) handlerOrClassName;
 		}
 		else {
+			// 没有做过解析，则返回的是类路径
 			String className = (String) handlerOrClassName;
 			try {
+				// 使用反射将类路径转化为类
 				Class<?> handlerClass = ClassUtils.forName(className, this.classLoader);
 				if (!NamespaceHandler.class.isAssignableFrom(handlerClass)) {
 					throw new FatalBeanException("Class [" + className + "] for namespace [" + namespaceUri +
 							"] does not implement the [" + NamespaceHandler.class.getName() + "] interface");
 				}
+				// 初始化类
 				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass);
+				// 调用自定义的NamespacedHandler的初始化方法
+				// 初始化时，执行 自定义BeanDefinitionParser的注册，可以注册多个标签解析器，以支持多种标签的解析
 				namespaceHandler.init();
+				// 记录在缓存
 				handlerMappings.put(namespaceUri, namespaceHandler);
 				return namespaceHandler;
 			}
@@ -166,6 +177,7 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 							logger.trace("Loaded NamespaceHandler mappings: " + mappings);
 						}
 						handlerMappings = new ConcurrentHashMap<>(mappings.size());
+						// 将 Properties 格式文件还能合并到 Map格式的 handlerMapping 中
 						CollectionUtils.mergePropertiesIntoMap(mappings, handlerMappings);
 						this.handlerMappings = handlerMappings;
 					}

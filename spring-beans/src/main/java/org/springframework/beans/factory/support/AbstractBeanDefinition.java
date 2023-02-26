@@ -153,11 +153,21 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
 
+	/**
+	 * 用来表示一个bean的实例化依靠于另外一个bean先实例化，对应bean的 depend-on
+	 */
 	@Nullable
 	private String[] dependsOn;
 
+	/**
+	 * autowire-candidate 属性设置为 false，这样容器在查找自动装配对象时，将不考虑该bean，即它不会被考虑作为其他bean自动装配的候选者
+	 * 但是该bean本身还是可以使用自动装配来注入其他bean的
+	 */
 	private boolean autowireCandidate = true;
 
+	/**
+	 * 自动装配时当出现多个候选者时，将作为首选者，对应bean属性 primary
+	 */
 	private boolean primary = false;
 
 	private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>();
@@ -169,30 +179,43 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private boolean lenientConstructorResolution = true;
 
+	/**
+	 * 对应 bean 属性的 factory-bean 用法：
+	 * 	<bean id="personFactory" class="org.springframework.kxr.PersonFactory"/>
+	 * 	<bean id="personFromFactory" factory-bean="personFactory" factory-method="newInstance"/>
+	 */
 	@Nullable
 	private String factoryBeanName;
 
 	@Nullable
 	private String factoryMethodName;
 
+	// 记录构造函数注入属性，对应 bean 属性 constructor-arg
 	@Nullable
 	private ConstructorArgumentValues constructorArgumentValues;
 
+	// 普通属性集合
 	@Nullable
 	private MutablePropertyValues propertyValues;
 
+	// 方法重写的持有者，记录 lookup-method、replaced-method 元素
 	private MethodOverrides methodOverrides = new MethodOverrides();
 
+	// 初始化方法，对应bean属性 init-method
 	@Nullable
 	private String initMethodName;
 
+	// 销毁方法,对应bean属性 destroy-method
 	@Nullable
 	private String destroyMethodName;
 
+	// 是否执行 init-method  (程序设定)
 	private boolean enforceInitMethod = true;
 
+	// 是否执行 destroy-method (程序设定)
 	private boolean enforceDestroyMethod = true;
 
+	// 是否是用户定义的而不是应用程序本身定义的，创建AOP时候为true (程序设置)
 	private boolean synthetic = false;
 
 	private int role = BeanDefinition.ROLE_APPLICATION;

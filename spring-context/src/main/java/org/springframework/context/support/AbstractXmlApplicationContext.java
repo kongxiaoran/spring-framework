@@ -118,7 +118,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 * @see #getResources
 	 * @see #getResourcePatternResolver
 	 */
-	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+	protected void  loadBeanDefinitions(XmlBeanDefinitionReader  reader) throws BeansException, IOException {
 		Resource[] configResources = getConfigResources();
 		if (configResources != null) {
 			reader.loadBeanDefinitions(configResources);

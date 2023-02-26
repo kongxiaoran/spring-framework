@@ -85,7 +85,7 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	 * @return the JAXP DocumentBuilderFactory
 	 * @throws ParserConfigurationException if we failed to build a proper DocumentBuilderFactory
 	 */
-	protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode, boolean namespaceAware)
+	protected DocumentBuilderFactory  createDocumentBuilderFactory(int validationMode, boolean namespaceAware)
 			throws ParserConfigurationException {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
