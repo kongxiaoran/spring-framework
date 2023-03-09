@@ -75,12 +75,15 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 
 	/** Cache of singleton objects: bean name to bean instance. */
+	// 一级缓存：单例bean的缓存
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/** Cache of singleton factories: bean name to ObjectFactory. */
+	// 三级缓存：单例bean工厂的缓存
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/** Cache of early singleton objects: bean name to bean instance. */
+	// 二级缓存： 早期暴露的bean的缓存
 	private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
 
 	/** Set of registered singletons, containing the bean names in registration order. */
@@ -216,6 +219,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		synchronized (this.singletonObjects) {
 			Object singletonObject = this.singletonObjects.get(beanName);
 			if (singletonObject == null) {
+				// 单例如果正在销毁中，则报异常
 				if (this.singletonsCurrentlyInDestruction) {
 					throw new BeanCreationNotAllowedException(beanName,
 							"Singleton bean creation not allowed while singletons of this factory are in destruction " +
@@ -224,6 +228,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
+				// 创建之前做个正在创建的标记
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -231,6 +236,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
+					// 调用 ObjectFactory 的 getObject 创建bean对象
 					singletonObject = singletonFactory.getObject();
 					newSingleton = true;
 				}

@@ -148,6 +148,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 	private final Map<Class<?>, Constructor<?>[]> candidateConstructorsCache = new ConcurrentHashMap<>(256);
 
+	// 用于保存解析出来的
 	private final Map<String, InjectionMetadata> injectionMetadataCache = new ConcurrentHashMap<>(256);
 
 
